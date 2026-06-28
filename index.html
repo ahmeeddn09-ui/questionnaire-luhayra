@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sondage Huile pour Barbe</title>
+
+  <style>
+    :root {
+      --violet-fonce: #4A2A6B;
+      --violet: #6624A8;
+      --fond-page: #f7f6f6;
+      --fond-carte: #ffffff;
+      --texte: #222;
+      --gris: #777;
+      --bordure: #ddd;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fond-page);
+      color: var(--texte);
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: auto;
+      background: var(--fond-carte);
+      padding: 40px;
+      border-radius: 22px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--violet-fonce);
+      margin-bottom: 10px;
+      font-size: 34px;
+    }
+
+    .sous-titre {
+      text-align: center;
+      color: var(--gris);
+      margin-bottom: 35px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: var(--violet-fonce);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid var(--bordure);
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+      background: #fafafa;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--violet);
+      background: white;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .ligne {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .choix {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .option {
+      border: 2px solid var(--bordure);
+      border-radius: 12px;
+      padding: 13px;
+      cursor: pointer;
+      background: #fafafa;
+      transition: 0.3s;
+      font-weight: normal;
+      color: var(--texte);
+    }
+
+    .option:hover {
+      border-color: var(--violet);
+      background: #f1eafa;
+    }
+
+    .option input {
+      width: auto;
+      margin-right: 10px;
+    }
+
+    .consentement {
+      background: #f1eafa;
+      border-left: 5px solid var(--violet);
+      padding: 18px;
+      border-radius: 12px;
+    }
+
+    .consentement label {
+      color: var(--texte);
+      font-weight: normal;
+    }
+
+    .consentement input {
+      width: auto;
+      margin-right: 10px;
+    }
+
+    .preview {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .preview img {
+      max-width: 220px;
+      border-radius: 15px;
+      border: 2px solid var(--violet);
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: var(--violet-fonce);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background: var(--violet);
+    }
+
+    .merci {
+      display: none;
+      margin-top: 30px;
+      padding: 25px;
+      border-radius: 18px;
+      background: #f1eafa;
+      border-left: 6px solid var(--violet);
+      text-align: center;
+    }
+
+    .merci h2 {
+      color: var(--violet-fonce);
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 650px) {
+      body {
+        padding: 15px;
+      }
+
+      .container {
+        padding: 25px;
+      }
+
+      .ligne {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Sondage Huile pour Barbe</h1>
+
+    <p class="sous-titre">
+      Merci de prendre quelques minutes pour donner ton avis sur notre huile pour barbe.
+    </p>
+
+    <form id="formulaire">
+
+      <div class="ligne">
+        <div class="section">
+          <label for="prenom">Prénom</label>
+          <input type="text" id="prenom" name="prenom" placeholder="Ex : Adam" required>
+        </div>
+
+        <div class="section">
+          <label for="nom">Nom</label>
+          <input type="text" id="nom" name="nom" placeholder="Ex : Diallo" required>
+        </div>
+      </div>
+
+      <div class="section">
+        <label for="age">Âge</label>
+        <input type="number" id="age" name="age" placeholder="Ex : 25" min="16" max="100" required>
+      </div>
+
+      <div class="section consentement">
+        <label>
+          <input type="checkbox" id="consentement" required>
+          J’accepte que mes réponses soient utilisées dans le cadre de ce sondage sur l’huile pour barbe.
+        </label>
+      </div>
+
+      <div class="section">
+        <label>Quel est ton type de peau ?</label>
+
+        <div class="choix">
+          <label class="option">
+            <input type="radio" name="peau" value="Peau sèche" required>
+            Peau sèche
+          </label>
+
+          <label class="option">
+            <input type="radio" name="peau" value="Peau grasse">
+            Peau grasse
+          </label>
+
+          <label class="option">
+            <input type="radio" name="peau" value="Peau mixte">
+            Peau mixte
+          </label>
+
+          <label class="option">
+            <input type="radio" name="peau" value="Peau sensible">
+            Peau sensible
+          </label>
+
+          <label class="option">
+            <input type="radio" name="peau" value="Je ne sais pas">
+            Je ne sais pas
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Longueur de la barbe</label>
+
+        <div class="choix">
+          <label class="option">
+            <input type="radio" name="barbeLongueur" value="Courte" required>
+            Courte
+          </label>
+
+          <label class="option">
+            <input type="radio" name="barbeLongueur" value="Moyenne">
+            Moyenne
+          </label>
+
+          <label class="option">
+            <input type="radio" name="barbeLongueur" value="Longue">
+            Longue
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Densité de la barbe</label>
+
+        <div class="choix">
+          <label class="option">
+            <input type="radio" name="barbeDensite" value="Clairsemée" required>
+            Clairsemée
+          </label>
+
+          <label class="option">
+            <input type="radio" name="barbeDensite" value="Normale">
+            Normale
+          </label>
+
+          <label class="option">
+            <input type="radio" name="barbeDensite" value="Fournie">
+            Fournie
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Texture de la barbe</label>
+
+        <div class="choix">
+          <label class="option">
+            <input type="radio" name="barbeTexture" value="Lisse" required>
+            Lisse
+          </label>
+
+          <label class="option">
+            <input type="radio" name="barbeTexture" value="Ondulée">
+            Ondulée
+          </label>
+
+          <label class="option">
+            <input type="radio" name="barbeTexture" value="Bouclée">
+            Bouclée
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <label for="frequence">À quelle fréquence utilises-tu une huile pour barbe ?</label>
+
+        <select id="frequence" name="frequence" required>
+          <option value="">Choisir une réponse</option>
+          <option value="Tous les jours">Tous les jours</option>
+          <option value="Plusieurs fois par semaine">Plusieurs fois par semaine</option>
+          <option value="Une fois par semaine">Une fois par semaine</option>
+          <option value="Rarement">Rarement</option>
+          <option value="Jamais">Jamais</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <label for="photo">Ajouter une photo</label>
+        <input type="file" id="photo" name="photo" accept="image/*">
+
+        <div class="preview" id="preview">
+          <p>Aperçu de la photo :</p>
+          <img id="imagePreview" src="#" alt="Aperçu photo">
+        </div>
+      </div>
+
+      <div class="section">
+        <label for="avis">Avis / critique</label>
+        <textarea id="avis" name="avis" placeholder="Donne ton avis sur la texture, l’odeur, l’efficacité, le packaging, etc." required></textarea>
+      </div>
+
+      <button type="submit">Envoyer le questionnaire</button>
+    </form>
+
+    <div class="merci" id="merci">
+      <h2>Merci pour ta réponse !</h2>
+      <p>Ton questionnaire a bien été préparé. Il ne reste plus qu’à envoyer le mail depuis ta messagerie.</p>
+    </div>
+  </div>
+
+  <script>
+    const formulaire = document.getElementById("formulaire");
+    const photo = document.getElementById("photo");
+    const preview = document.getElementById("preview");
+    const imagePreview = document.getElementById("imagePreview");
+    const merci = document.getElementById("merci");
+
+    photo.addEventListener("change", function () {
+      const fichier = this.files[0];
+
+      if (fichier) {
+        const lecteur = new FileReader();
+
+        lecteur.onload = function (e) {
+          imagePreview.src = e.target.result;
+          preview.style.display = "block";
+        };
+
+        lecteur.readAsDataURL(fichier);
+      }
+    });
+
+    formulaire.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const prenom = document.getElementById("prenom").value;
+      const nom = document.getElementById("nom").value;
+      const age = document.getElementById("age").value;
+      const peau = document.querySelector('input[name="peau"]:checked').value;
+      const barbeLongueur = document.querySelector('input[name="barbeLongueur"]:checked').value;
+      const barbeDensite = document.querySelector('input[name="barbeDensite"]:checked').value;
+      const barbeTexture = document.querySelector('input[name="barbeTexture"]:checked').value;
+      const frequence = document.getElementById("frequence").value;
+      const avis = document.getElementById("avis").value;
+
+      let nomPhoto = "Aucune photo ajoutée";
+
+      if (photo.files.length > 0) {
+        nomPhoto = photo.files[0].name;
+      }
+
+      const destinataire = "luhayra.boutique@gmail.com";
+      const sujet = "Nouveau sondage - Huile pour barbe";
+
+      const message = `
+Nouveau questionnaire reçu :
+
+Nom : ${nom}
+Prénom : ${prenom}
+Âge : ${age} ans
+
+Consentement : Oui
+
+Type de peau : ${peau}
+
+Type de barbe :
+- Longueur : ${barbeLongueur}
+- Densité : ${barbeDensite}
+- Texture : ${barbeTexture}
+
+Fréquence d'utilisation de l'huile : ${frequence}
+
+Photo ajoutée : ${nomPhoto}
+
+Avis / critique :
+${avis}
+      `;
+
+      const lienMail = `mailto:${destinataire}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(message)}`;
+
+      window.location.href = lienMail;
+
+      merci.style.display = "block";
+
+      merci.scrollIntoView({
+        behavior: "smooth"
+      });
+    });
+  </script>
+
+</body>
+</html>
