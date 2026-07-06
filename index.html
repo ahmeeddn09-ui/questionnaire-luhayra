@@ -170,11 +170,6 @@
       background: var(--violet);
     }
 
-    button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
     .merci {
       display: none;
       margin-top: 30px;
@@ -228,7 +223,7 @@
       Merci de prendre quelques minutes pour donner ton avis sur notre huile pour barbe.
     </p>
 
-    <form id="formulaire" enctype="multipart/form-data">
+    <form id="formulaire">
 
       <div class="ligne">
         <div class="section">
@@ -290,7 +285,12 @@
 
         <div class="choix">
           <label class="option">
-            <input type="radio" name="longueur" value="Courte" required>
+            <input type="radio" name="longueur" value="Pas de barbe" required>
+            Pas de barbe
+          </label>
+
+          <label class="option">
+            <input type="radio" name="longueur" value="Courte">
             Courte
           </label>
 
@@ -379,17 +379,17 @@
       <div class="section consentement">
         <label>
           <input type="checkbox" id="consentementTest" name="consentementTest" value="Oui" required>
-          Je suis consentant de tester gratuitement cette huile à barbe en échange d’un flacon d’huile.
+          Je suis consentant de tester gratuitement cette huile à barbe en échange d’un flacon d’huile de serpent provenant de chez LUHAYRA.
         </label>
       </div>
 
-      <button type="submit" id="btnEnvoyer">Envoyer le questionnaire</button>
+      <button type="submit">Envoyer le questionnaire</button>
       <p class="erreur" id="messageErreur"></p>
     </form>
 
     <div class="merci" id="merci">
       <h2>Merci pour votre réponse !</h2>
-      <p>Votre questionnaire a bien été envoyé à Luhayra.</p>
+      <p>Un mail pré-rempli a été ouvert. Il ne reste plus qu’à cliquer sur envoyer dans votre messagerie.</p>
     </div>
   </div>
 
@@ -402,140 +402,47 @@
     const preview = document.getElementById("preview");
     const imagePreview = document.getElementById("imagePreview");
     const merci = document.getElementById("merci");
-    const btnEnvoyer = document.getElementById("btnEnvoyer");
     const messageErreur = document.getElementById("messageErreur");
 
     const motsVulgaires = [
-      "abruti",
-      "abrutie",
-      "abrutis",
-      "batard",
-      "bâtard",
-      "batarde",
-      "bâtarde",
-      "bdl",
-      "bite",
-      "bites",
-      "bordel",
-      "bouffon",
-      "bouffonne",
-      "btr",
-      "chatte",
-      "chattes",
-      "chieur",
-      "chieuse",
-      "con",
-      "connard",
-      "connarde",
-      "connards",
-      "connasse",
-      "connasses",
-      "conne",
-      "connes",
-      "cons",
-      "couille",
-      "couilles",
-      "crétin",
-      "cretin",
-      "cul",
-      "débile",
-      "debile",
-      "encule",
-      "enculé",
-      "enculee",
-      "enculée",
-      "enculer",
-      "enfoire",
-      "enfoiré",
-      "enfoiree",
-      "enfoirée",
-      "fdp",
-      "ferme ta gueule",
-      "fils de pute",
-      "fille de pute",
-      "ftg",
-      "foutre",
-      "gueule",
-      "merde",
-      "merdes",
-      "nsm",
-      "ntm",
-      "nique",
-      "nique ta mere",
-      "nique ta mère",
-      "niquer",
-      "pd",
-      "pétasse",
-      "petasse",
-      "pouffiasse",
-      "ptn",
-      "pute",
-      "putes",
-      "putain",
-      "salaud",
-      "salop",
-      "salope",
-      "salopes",
-      "ta gueule",
-      "tg",
-      "va te faire foutre",
-      "vaf",
-      "vaff",
-      "vtff",
-      "zebi",
-      "zb",
-      "zbi",
-      "asshole",
-      "bitch",
-      "fck",
-      "fuck",
-      "fuk",
-      "motherfucker",
-      "shit",
-      "stfu",
-      "wtf"
+      "abruti", "abrutie", "abrutis",
+      "batard", "bâtard", "batarde", "bâtarde",
+      "bdl", "bite", "bites", "bordel",
+      "bouffon", "bouffonne", "btr",
+      "chatte", "chattes", "chieur", "chieuse",
+      "con", "connard", "connarde", "connards",
+      "connasse", "connasses", "conne", "connes", "cons",
+      "couille", "couilles", "cretin", "crétin",
+      "cul", "debile", "débile",
+      "encule", "enculé", "enculee", "enculée", "enculer",
+      "enfoire", "enfoiré", "enfoiree", "enfoirée",
+      "fdp", "ferme ta gueule", "fils de pute", "fille de pute",
+      "ftg", "foutre", "gueule",
+      "merde", "merdes",
+      "nsm", "ntm",
+      "nique", "nique ta mere", "nique ta mère", "niquer",
+      "pd", "petasse", "pétasse", "pouffiasse",
+      "ptn", "pute", "putes", "putain",
+      "salaud", "salop", "salope", "salopes",
+      "ta gueule", "tg",
+      "va te faire foutre", "vaf", "vaff", "vtff",
+      "zebi", "zb", "zbi",
+      "asshole", "bitch", "fck", "fuck", "fuk",
+      "motherfucker", "shit", "stfu", "wtf"
     ];
 
     const motsCompacts = [
-      "putain",
-      "ptn",
-      "merde",
-      "bordel",
-      "fdp",
-      "filsdepute",
-      "filledepute",
-      "encule",
-      "enculer",
-      "connard",
-      "connasse",
-      "batard",
-      "batarde",
-      "salope",
-      "salopes",
-      "petasse",
-      "pouffiasse",
-      "niquetamere",
-      "tagueule",
-      "fermetagueule",
-      "tg",
-      "ftg",
-      "ntm",
-      "nsm",
-      "vtff",
-      "vaff",
-      "vaf",
-      "zebi",
-      "zbi",
-      "zb",
-      "fuck",
-      "fck",
-      "fuk",
-      "shit",
-      "bitch",
-      "asshole",
-      "motherfucker",
-      "stfu",
-      "wtf"
+      "putain", "ptn", "merde", "bordel", "fdp",
+      "filsdepute", "filledepute",
+      "encule", "enculer",
+      "connard", "connasse",
+      "batard", "batarde",
+      "salope", "salopes",
+      "petasse", "pouffiasse",
+      "niquetamere", "tagueule", "fermetagueule",
+      "tg", "ftg", "ntm", "nsm", "vtff", "vaff", "vaf",
+      "zebi", "zbi", "zb",
+      "fuck", "fck", "fuk", "shit", "bitch", "asshole", "motherfucker", "stfu", "wtf"
     ];
 
     function echapperRegex(texte) {
@@ -561,7 +468,6 @@
       const motNormalise = normaliserTexte(mot).trim();
       const morceaux = motNormalise.split(/\s+/).map(echapperRegex);
       const motif = morceaux.join("[\\s\\W_]*");
-
       return new RegExp(`(^|[^a-z0-9])${motif}($|[^a-z0-9])`, "i");
     }
 
@@ -634,56 +540,74 @@
       }
     });
 
-    formulaire.addEventListener("submit", async function (event) {
+    formulaire.addEventListener("submit", function (event) {
       event.preventDefault();
 
       if (!verifierChampsInterdits()) {
         return;
       }
 
-      const formData = new FormData(formulaire);
+      const prenom = prenomInput.value;
+      const nom = nomInput.value;
+      const age = document.getElementById("age").value;
+      const peau = document.querySelector('input[name="peau"]:checked').value;
+      const longueur = document.querySelector('input[name="longueur"]:checked').value;
+      const densite = document.querySelector('input[name="densite"]:checked').value;
+      const texture = document.querySelector('input[name="texture"]:checked').value;
+      const frequence = document.getElementById("frequence").value;
+      const avis = avisInput.value;
 
-      btnEnvoyer.disabled = true;
-      btnEnvoyer.textContent = "Envoi en cours...";
+      let nomPhoto = "Aucune photo ajoutée";
 
-      const controleur = new AbortController();
-      const delaiMaximum = setTimeout(() => {
-        controleur.abort();
-      }, 30000);
-
-      try {
-        const response = await fetch("/envoyer", {
-          method: "POST",
-          body: formData,
-          signal: controleur.signal
-        });
-
-        clearTimeout(delaiMaximum);
-
-        if (response.ok) {
-          formulaire.style.display = "none";
-          merci.style.display = "block";
-
-          merci.scrollIntoView({
-            behavior: "smooth"
-          });
-        } else {
-          const texteErreur = await response.text();
-          throw new Error(texteErreur || "Erreur lors de l’envoi du questionnaire.");
-        }
-      } catch (error) {
-        clearTimeout(delaiMaximum);
-
-        if (error.name === "AbortError") {
-          messageErreur.textContent = "L’envoi prend trop de temps. Réessaie dans quelques secondes. Si le problème continue, vérifie les logs Render et le mot de passe d’application Gmail.";
-        } else {
-          messageErreur.textContent = error.message || "Impossible d’envoyer le questionnaire. Vérifie que Render est bien déployé et que les identifiants Gmail sont corrects.";
-        }
-
-        messageErreur.style.display = "block";
-        btnEnvoyer.disabled = false;
-        btnEnvoyer.textContent = "Envoyer le questionnaire";
+      if (photo.files.length > 0) {
+        nomPhoto = photo.files[0].name;
       }
+
+      const destinataire = "luhayra.boutique@gmail.com";
+      const sujet = "questionnaire";
+
+      const message = `Bonjour ${nom} ${prenom},
+
+Vous trouverez mes réponses ci-joint.
+
+QUESTIONNAIRE HUILE POUR BARBE - LUHAYRA
+
+Nom : ${nom}
+Prénom : ${prenom}
+Âge : ${age} ans
+
+Consentement au sondage : Oui
+
+Consentement au test gratuit :
+Oui
+
+Type de peau : ${peau}
+
+Type de barbe :
+- Longueur : ${longueur}
+- Densité : ${densite}
+- Texture : ${texture}
+
+Fréquence d'utilisation de l'huile pour barbe : ${frequence}
+
+Photo ajoutée : ${nomPhoto}
+
+Avis / critique :
+${avis}
+
+Cordialement,
+
+${prenom} ${nom}`;
+
+      const lienMail = `mailto:${destinataire}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(message)}`;
+
+      window.location.href = lienMail;
+
+      merci.style.display = "block";
+
+      merci.scrollIntoView({
+        behavior: "smooth"
+      });
     });
   </script>
 
