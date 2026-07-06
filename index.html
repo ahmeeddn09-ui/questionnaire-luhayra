@@ -185,6 +185,21 @@
       background: var(--violet);
     }
 
+    .bouton-fiche {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 14px 20px;
+      background: var(--violet-fonce);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+
+    .bouton-fiche:hover {
+      background: var(--violet);
+    }
+
     .merci {
       display: none;
       margin-top: 30px;
@@ -426,7 +441,9 @@
 
     <div class="merci" id="merci">
       <h2>Merci pour votre réponse !</h2>
-      <p>Un mail pré-rempli a été ouvert. Il ne reste plus qu’à cliquer sur envoyer dans votre messagerie.</p>
+      <p>Un premier mail pré-rempli a été ouvert pour envoyer le questionnaire à Luhayra.</p>
+      <p>Pour recevoir la fiche d’utilisation personnalisée, cliquez ensuite sur le bouton ci-dessous.</p>
+      <a href="#" id="boutonFiche" class="bouton-fiche">Ouvrir ma fiche d’utilisation</a>
     </div>
   </div>
 
@@ -442,6 +459,7 @@
     const merci = document.getElementById("merci");
     const messageErreur = document.getElementById("messageErreur");
     const fichePreview = document.getElementById("fichePreview");
+    const boutonFiche = document.getElementById("boutonFiche");
 
     const motsVulgaires = [
       "abruti", "abrutie", "abrutis",
@@ -763,17 +781,26 @@ Attention : la photo doit être jointe manuellement au mail, car le navigateur n
 Avis / critique :
 ${avis}
 
-----------------------------------------
-
-${ficheUtilisation}
-
-----------------------------------------
-
 Cordialement,
 
 ${prenom} ${nom}`;
 
-      const lienMail = `mailto:${destinataire}?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(message)}`;
+      const lienMail = `mailto:${destinataire}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(message)}`;
+
+      const sujetFiche = "Votre fiche d’utilisation personnalisée LUHAYRA";
+
+      const messageFiche = `Bonjour ${prenom},
+
+Voici votre fiche d’utilisation personnalisée selon votre type de peau.
+
+${ficheUtilisation}
+
+Merci pour votre participation.
+
+LUHAYRA`;
+
+      const lienFiche = `mailto:${email}?subject=${encodeURIComponent(sujetFiche)}&body=${encodeURIComponent(messageFiche)}`;
+      boutonFiche.href = lienFiche;
 
       if (photo.files.length > 0) {
         alert("La photo ne peut pas être jointe automatiquement avec cette version. Après l’ouverture du mail, clique sur Joindre un fichier et ajoute la photo toi-même.");
