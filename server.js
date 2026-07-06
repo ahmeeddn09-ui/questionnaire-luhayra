@@ -11,9 +11,52 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
-
-// Permet d’ouvrir index.html directement depuis le serveur
 app.use(express.static(__dirname));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Fonction pour censurer les mots vulgaires
+function censurerTexte(texte) {
+  const motsVulgaires = [
+    "merde",
+    "putain",
+    "pute",
+    "connard",
+    "connasse",
+    "con",
+    "salope",
+    "enculé",
+    "encule",
+    "fdp",
+    "bite",
+    "couille",
+    "couilles",
+    "nique",
+    "niquer",
+    "ta gueule",
+    "tg",
+    "bordel"
+  ];
+
+  let texteCensure = texte || "";
+
+  motsVulgaires.forEach(mot => {
+    const motProtege = mot.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    const regex = new RegExp(
+      `(^|[^a-zA-ZÀ-ÿ])(${motProtege})(?=$|[^a-zA-ZÀ-ÿ])`,
+      "gi"
+    );
+
+    texteCensure = texteCensure.replace(regex, (match, avant, motTrouve) => {
+      return avant + "*".repeat(motTrouve.length);
+    });
+  });
+
+  return texteCensure;
+}
 
 app.post("/envoyer", upload.single("photo"), async (req, res) => {
   try {
@@ -22,6 +65,7 @@ app.post("/envoyer", upload.single("photo"), async (req, res) => {
       prenom,
       age,
       consentement,
+      consentementTest,
       peau,
       longueur,
       densite,
@@ -30,6 +74,12 @@ app.post("/envoyer", upload.single("photo"), async (req, res) => {
       avis
     } = req.body;
 
+    if (consentementTest !== "Oui") {
+      return res.status(400).send("Le consentement au test gratuit est obligatoire.");
+    }
+
+    const avisCensure = censurerTexte(avis);
+
     const questionnaire = `
 QUESTIONNAIRE HUILE POUR BARBE - LUHAYRA
 
@@ -37,7 +87,10 @@ Nom : ${nom}
 Prénom : ${prenom}
 Âge : ${age} ans
 
-Consentement : ${consentement || "Non"}
+Consentement au sondage : ${consentement || "Non"}
+
+Consentement au test gratuit :
+${consentementTest}
 
 Type de peau : ${peau}
 
@@ -49,7 +102,7 @@ Type de barbe :
 Fréquence d'utilisation de l'huile pour barbe : ${frequence}
 
 Avis / critique :
-${avis}
+${avisCensure}
 `;
 
     const piecesJointes = [
