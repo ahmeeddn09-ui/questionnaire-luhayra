@@ -596,7 +596,7 @@ Type de barbe :
 
 Fréquence d'utilisation de l'huile pour barbe : ${frequence}
 
-Photo ajoutée : ${nomPhoto}
+Photo : ${nomPhoto}\nAttention : la photo doit être jointe manuellement au mail, car le navigateur ne peut pas l'ajouter automatiquement.
 
 Avis / critique :
 ${avis}
@@ -606,6 +606,10 @@ Cordialement,
 ${prenom} ${nom}`;
 
       const lienMail = `mailto:${destinataire}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(message)}`;
+
+      if (photo.files.length > 0) {
+        alert("La photo ne peut pas être jointe automatiquement avec cette version. Après l’ouverture du mail, clique sur Joindre un fichier et ajoute la photo toi-même.");
+      }
 
       window.location.href = lienMail;
 
