@@ -374,6 +374,44 @@
 
   <script>
     const formulaire = document.getElementById("formulaire");
+    const avisInput = document.getElementById("avis");
+
+function censurerTexte(texte) {
+  const motsVulgaires = [
+    "merde",
+    "putain",
+    "pute",
+    "connard",
+    "connasse",
+    "con",
+    "salope",
+    "enculé",
+    "encule",
+    "fdp",
+    "bite",
+    "couille",
+    "couilles",
+    "nique",
+    "niquer",
+    "ta gueule",
+    "tg",
+    "bordel"
+  ];
+
+  let texteCensure = texte || "";
+
+  motsVulgaires.forEach(mot => {
+    const motProtege = mot.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(motProtege, "gi");
+    texteCensure = texteCensure.replace(regex, "****");
+  });
+
+  return texteCensure;
+}
+
+avisInput.addEventListener("input", function () {
+  avisInput.value = censurerTexte(avisInput.value);
+});
     const photo = document.getElementById("photo");
     const preview = document.getElementById("preview");
     const imagePreview = document.getElementById("imagePreview");
