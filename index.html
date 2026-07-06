@@ -141,6 +141,21 @@
       margin-right: 10px;
     }
 
+    .fiche-preview {
+      display: none;
+      background: #faf7ff;
+      border: 2px solid #e2d4f5;
+      border-radius: 14px;
+      padding: 18px;
+      white-space: pre-line;
+      line-height: 1.5;
+      color: var(--texte);
+    }
+
+    .fiche-preview strong {
+      color: var(--violet-fonce);
+    }
+
     .preview {
       margin-top: 15px;
       display: none;
@@ -238,6 +253,11 @@
       </div>
 
       <div class="section">
+        <label for="email">Adresse e-mail pour recevoir la fiche d’utilisation</label>
+        <input type="email" id="email" name="email" placeholder="Ex : adam@email.com" required>
+      </div>
+
+      <div class="section">
         <label for="age">Âge</label>
         <input type="number" id="age" name="age" placeholder="Ex : 25" min="16" max="100" required>
       </div>
@@ -277,6 +297,13 @@
             <input type="radio" name="peau" value="Je ne sais pas">
             Je ne sais pas
           </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Fiche d’utilisation personnalisée</label>
+        <div class="fiche-preview" id="fichePreview">
+          Choisis un type de peau pour voir les conseils d’utilisation.
         </div>
       </div>
 
@@ -407,12 +434,14 @@
     const formulaire = document.getElementById("formulaire");
     const prenomInput = document.getElementById("prenom");
     const nomInput = document.getElementById("nom");
+    const emailInput = document.getElementById("email");
     const avisInput = document.getElementById("avis");
     const photo = document.getElementById("photo");
     const preview = document.getElementById("preview");
     const imagePreview = document.getElementById("imagePreview");
     const merci = document.getElementById("merci");
     const messageErreur = document.getElementById("messageErreur");
+    const fichePreview = document.getElementById("fichePreview");
 
     const motsVulgaires = [
       "abruti", "abrutie", "abrutis",
@@ -529,6 +558,112 @@
       return true;
     }
 
+    function obtenirFicheUtilisation(typePeau) {
+      if (typePeau === "Peau sèche") {
+        return `FICHE D’UTILISATION LUHAYRA - PEAU SÈCHE
+
+Objectif : nourrir la peau sous la barbe et limiter la sensation de tiraillement.
+
+Fréquence recommandée :
+- 1 fois par jour.
+- De préférence le soir, ou après la douche.
+
+Mode d’utilisation :
+1. Nettoyer le visage et sécher délicatement la barbe.
+2. Mettre 3 à 5 gouttes d’huile dans la paume.
+3. Chauffer l’huile entre les mains.
+4. Masser la peau sous la barbe pendant 30 secondes.
+5. Répartir le reste sur les longueurs.
+
+Conseil :
+Si la peau reste sèche, utiliser une petite quantité tous les jours pendant une semaine, puis ajuster selon le ressenti.`;
+      }
+
+      if (typePeau === "Peau grasse") {
+        return `FICHE D’UTILISATION LUHAYRA - PEAU GRASSE
+
+Objectif : adoucir la barbe sans surcharger la peau.
+
+Fréquence recommandée :
+- 2 à 3 fois par semaine.
+- Éviter d’en mettre en trop grande quantité.
+
+Mode d’utilisation :
+1. Nettoyer le visage avec un produit doux.
+2. Sécher complètement la barbe.
+3. Mettre 1 à 2 gouttes maximum dans la paume.
+4. Appliquer surtout sur les poils, en évitant de trop insister sur la peau.
+5. Brosser la barbe pour bien répartir.
+
+Conseil :
+Si la peau devient brillante ou grasse rapidement, espacer l’utilisation.`;
+      }
+
+      if (typePeau === "Peau mixte") {
+        return `FICHE D’UTILISATION LUHAYRA - PEAU MIXTE
+
+Objectif : nourrir les zones sèches sans graisser les zones déjà grasses.
+
+Fréquence recommandée :
+- 3 à 4 fois par semaine.
+- De préférence le soir.
+
+Mode d’utilisation :
+1. Nettoyer et sécher la barbe.
+2. Mettre 2 à 3 gouttes dans la paume.
+3. Appliquer d’abord sur les zones sèches.
+4. Étaler ensuite légèrement sur le reste de la barbe.
+5. Brosser pour répartir uniformément.
+
+Conseil :
+Adapter la quantité selon les zones : moins d’huile sur les zones grasses, plus sur les zones sèches.`;
+      }
+
+      if (typePeau === "Peau sensible") {
+        return `FICHE D’UTILISATION LUHAYRA - PEAU SENSIBLE
+
+Objectif : tester doucement le produit et éviter une réaction.
+
+Fréquence recommandée :
+- 1 à 2 fois par semaine au début.
+- Augmenter seulement si la peau tolère bien le produit.
+
+Mode d’utilisation :
+1. Faire un test sur une petite zone de peau pendant 24h.
+2. Si aucune réaction n’apparaît, appliquer 1 à 2 gouttes.
+3. Masser très doucement la peau sous la barbe.
+4. Éviter d’appliquer après rasage si la peau est irritée.
+5. Stopper l’utilisation en cas de rougeur, brûlure ou démangeaison.
+
+Conseil :
+Commencer avec une très petite quantité.`;
+      }
+
+      return `FICHE D’UTILISATION LUHAYRA - TYPE DE PEAU NON IDENTIFIÉ
+
+Objectif : commencer doucement et observer la réaction de la peau.
+
+Fréquence recommandée :
+- 2 à 3 fois par semaine au début.
+
+Mode d’utilisation :
+1. Nettoyer et sécher la barbe.
+2. Mettre 1 à 2 gouttes dans la paume.
+3. Appliquer sur la barbe et masser légèrement la peau.
+4. Observer le rendu après quelques heures.
+5. Ajuster la fréquence selon le ressenti.
+
+Conseil :
+Si la peau tire, augmenter légèrement. Si la peau devient grasse, réduire la quantité.`;
+    }
+
+    document.querySelectorAll('input[name="peau"]').forEach(input => {
+      input.addEventListener("change", function () {
+        fichePreview.style.display = "block";
+        fichePreview.innerHTML = "<strong>Fiche qui sera envoyée en copie :</strong><br><br>" + obtenirFicheUtilisation(this.value);
+      });
+    });
+
     prenomInput.addEventListener("input", verifierChampsInterdits);
     nomInput.addEventListener("input", verifierChampsInterdits);
     avisInput.addEventListener("input", verifierChampsInterdits);
@@ -559,6 +694,7 @@
 
       const prenom = prenomInput.value;
       const nom = nomInput.value;
+      const email = emailInput.value;
       const age = document.getElementById("age").value;
       const peau = document.querySelector('input[name="peau"]:checked').value;
       const longueur = document.querySelector('input[name="longueur"]:checked').value;
@@ -566,6 +702,7 @@
       const texture = document.querySelector('input[name="texture"]:checked').value;
       const frequence = document.getElementById("frequence").value;
       const avis = avisInput.value;
+      const ficheUtilisation = obtenirFicheUtilisation(peau);
 
       let nomPhoto = "Aucune photo ajoutée";
 
@@ -580,6 +717,7 @@
 
 Nom : ${nom}
 Prénom : ${prenom}
+Email : ${email}
 Âge : ${age} ans
 
 Consentement au sondage : Oui
@@ -596,16 +734,23 @@ Type de barbe :
 
 Fréquence d'utilisation de l'huile pour barbe : ${frequence}
 
-Photo : ${nomPhoto}\nAttention : la photo doit être jointe manuellement au mail, car le navigateur ne peut pas l'ajouter automatiquement.
+Photo : ${nomPhoto}
+Attention : la photo doit être jointe manuellement au mail, car le navigateur ne peut pas l'ajouter automatiquement.
 
 Avis / critique :
 ${avis}
+
+----------------------------------------
+
+${ficheUtilisation}
+
+----------------------------------------
 
 Cordialement,
 
 ${prenom} ${nom}`;
 
-      const lienMail = `mailto:${destinataire}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(message)}`;
+      const lienMail = `mailto:${destinataire}?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(message)}`;
 
       if (photo.files.length > 0) {
         alert("La photo ne peut pas être jointe automatiquement avec cette version. Après l’ouverture du mail, clique sur Joindre un fichier et ajoute la photo toi-même.");
