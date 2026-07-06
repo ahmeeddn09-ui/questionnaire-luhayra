@@ -406,34 +406,179 @@
     const messageErreur = document.getElementById("messageErreur");
 
     const motsVulgaires = [
-      "merde",
-      "putain",
-      "pute",
-      "connard",
-      "connasse",
-      "con",
-      "salope",
-      "enculé",
-      "encule",
-      "fdp",
+      "abruti",
+      "abrutie",
+      "abrutis",
+      "batard",
+      "bâtard",
+      "batarde",
+      "bâtarde",
+      "bdl",
       "bite",
+      "bites",
+      "bordel",
+      "bouffon",
+      "bouffonne",
+      "btr",
+      "chatte",
+      "chattes",
+      "chieur",
+      "chieuse",
+      "con",
+      "connard",
+      "connarde",
+      "connards",
+      "connasse",
+      "connasses",
+      "conne",
+      "connes",
+      "cons",
       "couille",
       "couilles",
+      "crétin",
+      "cretin",
+      "cul",
+      "débile",
+      "debile",
+      "encule",
+      "enculé",
+      "enculee",
+      "enculée",
+      "enculer",
+      "enfoire",
+      "enfoiré",
+      "enfoiree",
+      "enfoirée",
+      "fdp",
+      "ferme ta gueule",
+      "fils de pute",
+      "fille de pute",
+      "ftg",
+      "foutre",
+      "gueule",
+      "merde",
+      "merdes",
+      "nsm",
+      "ntm",
       "nique",
+      "nique ta mere",
+      "nique ta mère",
       "niquer",
+      "pd",
+      "pétasse",
+      "petasse",
+      "pouffiasse",
+      "ptn",
+      "pute",
+      "putes",
+      "putain",
+      "salaud",
+      "salop",
+      "salope",
+      "salopes",
       "ta gueule",
       "tg",
-      "bordel"
+      "va te faire foutre",
+      "vaf",
+      "vaff",
+      "vtff",
+      "zebi",
+      "zb",
+      "zbi",
+      "asshole",
+      "bitch",
+      "fck",
+      "fuck",
+      "fuk",
+      "motherfucker",
+      "shit",
+      "stfu",
+      "wtf"
     ];
 
-    function contientMotVulgaire(texte) {
-      const contenu = texte || "";
+    const motsCompacts = [
+      "putain",
+      "ptn",
+      "merde",
+      "bordel",
+      "fdp",
+      "filsdepute",
+      "filledepute",
+      "encule",
+      "enculer",
+      "connard",
+      "connasse",
+      "batard",
+      "batarde",
+      "salope",
+      "salopes",
+      "petasse",
+      "pouffiasse",
+      "niquetamere",
+      "tagueule",
+      "fermetagueule",
+      "tg",
+      "ftg",
+      "ntm",
+      "nsm",
+      "vtff",
+      "vaff",
+      "vaf",
+      "zebi",
+      "zbi",
+      "zb",
+      "fuck",
+      "fck",
+      "fuk",
+      "shit",
+      "bitch",
+      "asshole",
+      "motherfucker",
+      "stfu",
+      "wtf"
+    ];
 
-      return motsVulgaires.some(mot => {
-        const motProtege = mot.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const regex = new RegExp(`(^|[^a-zA-ZÀ-ÿ])${motProtege}($|[^a-zA-ZÀ-ÿ])`, "i");
-        return regex.test(contenu);
+    function echapperRegex(texte) {
+      return texte.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function normaliserTexte(texte) {
+      return (texte || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[@]/g, "a")
+        .replace(/[0]/g, "o")
+        .replace(/[1!|]/g, "i")
+        .replace(/[3]/g, "e")
+        .replace(/[4]/g, "a")
+        .replace(/[5$]/g, "s")
+        .replace(/[7]/g, "t")
+        .replace(/[8]/g, "b");
+    }
+
+    function creerRegexMot(mot) {
+      const motNormalise = normaliserTexte(mot).trim();
+      const morceaux = motNormalise.split(/\s+/).map(echapperRegex);
+      const motif = morceaux.join("[\\s\\W_]*");
+
+      return new RegExp(`(^|[^a-z0-9])${motif}($|[^a-z0-9])`, "i");
+    }
+
+    function contientMotVulgaire(texte) {
+      const contenuNormalise = normaliserTexte(texte);
+      const contenuCompact = contenuNormalise.replace(/[^a-z0-9]/g, "");
+
+      const trouveMotClassique = motsVulgaires.some(mot => {
+        return creerRegexMot(mot).test(contenuNormalise);
       });
+
+      const trouveMotCache = motsCompacts.some(mot => {
+        const motCompact = normaliserTexte(mot).replace(/[^a-z0-9]/g, "");
+        return contenuCompact.includes(motCompact);
+      });
+
+      return trouveMotClassique || trouveMotCache;
     }
 
     function verifierChampsInterdits() {
@@ -458,7 +603,7 @@
         messageErreur.textContent =
           "Impossible d’envoyer le questionnaire : le champ " +
           champsAvecErreur.join(", ") +
-          " contient un mot interdit. Merci de le modifier.";
+          " contient un mot interdit ou une abréviation vulgaire. Merci de le modifier.";
         messageErreur.style.display = "block";
         return false;
       }
