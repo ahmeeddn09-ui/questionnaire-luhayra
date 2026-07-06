@@ -288,12 +288,6 @@
       <div class="section">
         <label>Longueur de la barbe</label>
 
-         <div class="choix">
-          <label class="option">
-            <input type="radio" name="longueur" value="Pas de Barbe" required>
-            Pas de Barbe
-          </label>
-
         <div class="choix">
           <label class="option">
             <input type="radio" name="longueur" value="Courte" required>
@@ -385,7 +379,7 @@
       <div class="section consentement">
         <label>
           <input type="checkbox" id="consentementTest" name="consentementTest" value="Oui" required>
-          Je suis consentant de tester gratuitement cette huile à barbe en échange d’un flacon d’huile de serpent provenant de cher LUHAYRA.
+          Je suis consentant de tester gratuitement cette huile à barbe en échange d’un flacon d’huile.
         </label>
       </div>
 
@@ -652,11 +646,19 @@
       btnEnvoyer.disabled = true;
       btnEnvoyer.textContent = "Envoi en cours...";
 
+      const controleur = new AbortController();
+      const delaiMaximum = setTimeout(() => {
+        controleur.abort();
+      }, 30000);
+
       try {
         const response = await fetch("/envoyer", {
           method: "POST",
-          body: formData
+          body: formData,
+          signal: controleur.signal
         });
+
+        clearTimeout(delaiMaximum);
 
         if (response.ok) {
           formulaire.style.display = "none";
@@ -670,9 +672,15 @@
           throw new Error(texteErreur || "Erreur lors de l’envoi du questionnaire.");
         }
       } catch (error) {
-        messageErreur.textContent = "Impossible d’envoyer le questionnaire. Vérifie que le serveur est bien lancé ou que Render est bien déployé.";
-        messageErreur.style.display = "block";
+        clearTimeout(delaiMaximum);
 
+        if (error.name === "AbortError") {
+          messageErreur.textContent = "L’envoi prend trop de temps. Réessaie dans quelques secondes. Si le problème continue, vérifie les logs Render et le mot de passe d’application Gmail.";
+        } else {
+          messageErreur.textContent = error.message || "Impossible d’envoyer le questionnaire. Vérifie que Render est bien déployé et que les identifiants Gmail sont corrects.";
+        }
+
+        messageErreur.style.display = "block";
         btnEnvoyer.disabled = false;
         btnEnvoyer.textContent = "Envoyer le questionnaire";
       }
