@@ -14,6 +14,7 @@
       --texte: #222;
       --gris: #777;
       --bordure: #ddd;
+      --erreur: #b00020;
     }
 
     * {
@@ -78,6 +79,11 @@
     textarea:focus {
       border-color: var(--violet);
       background: white;
+    }
+
+    .champ-erreur {
+      border-color: var(--erreur) !important;
+      background: #fff4f4 !important;
     }
 
     textarea {
@@ -164,6 +170,11 @@
       background: var(--violet);
     }
 
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     .merci {
       display: none;
       margin-top: 30px;
@@ -177,6 +188,15 @@
     .merci h2 {
       color: var(--violet-fonce);
       margin-bottom: 10px;
+    }
+
+    .erreur {
+      display: none;
+      margin-top: 20px;
+      color: var(--erreur);
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.5;
     }
 
     @media (max-width: 650px) {
@@ -208,7 +228,7 @@
       Merci de prendre quelques minutes pour donner ton avis sur notre huile pour barbe.
     </p>
 
-    <form id="formulaire">
+    <form id="formulaire" enctype="multipart/form-data">
 
       <div class="ligne">
         <div class="section">
@@ -229,7 +249,7 @@
 
       <div class="section consentement">
         <label>
-          <input type="checkbox" id="consentement" required>
+          <input type="checkbox" id="consentement" name="consentement" value="Oui" required>
           J’accepte que mes réponses soient utilisées dans le cadre de ce sondage sur l’huile pour barbe.
         </label>
       </div>
@@ -270,17 +290,17 @@
 
         <div class="choix">
           <label class="option">
-            <input type="radio" name="barbeLongueur" value="Courte" required>
+            <input type="radio" name="longueur" value="Courte" required>
             Courte
           </label>
 
           <label class="option">
-            <input type="radio" name="barbeLongueur" value="Moyenne">
+            <input type="radio" name="longueur" value="Moyenne">
             Moyenne
           </label>
 
           <label class="option">
-            <input type="radio" name="barbeLongueur" value="Longue">
+            <input type="radio" name="longueur" value="Longue">
             Longue
           </label>
         </div>
@@ -291,17 +311,17 @@
 
         <div class="choix">
           <label class="option">
-            <input type="radio" name="barbeDensite" value="Clairsemée" required>
+            <input type="radio" name="densite" value="Clairsemée" required>
             Clairsemée
           </label>
 
           <label class="option">
-            <input type="radio" name="barbeDensite" value="Normale">
+            <input type="radio" name="densite" value="Normale">
             Normale
           </label>
 
           <label class="option">
-            <input type="radio" name="barbeDensite" value="Fournie">
+            <input type="radio" name="densite" value="Fournie">
             Fournie
           </label>
         </div>
@@ -312,17 +332,17 @@
 
         <div class="choix">
           <label class="option">
-            <input type="radio" name="barbeTexture" value="Lisse" required>
+            <input type="radio" name="texture" value="Lisse" required>
             Lisse
           </label>
 
           <label class="option">
-            <input type="radio" name="barbeTexture" value="Ondulée">
+            <input type="radio" name="texture" value="Ondulée">
             Ondulée
           </label>
 
           <label class="option">
-            <input type="radio" name="barbeTexture" value="Bouclée">
+            <input type="radio" name="texture" value="Bouclée">
             Bouclée
           </label>
         </div>
@@ -356,66 +376,101 @@
         <textarea id="avis" name="avis" placeholder="Donne ton avis sur la texture, l’odeur, l’efficacité, le packaging, etc." required></textarea>
       </div>
 
-<div class="section consentement">
-  <label>
-    <input type="checkbox" id="consentementTest" name="consentementTest" value="Oui" required>
-    Je suis consentant de tester gratuitement cette huile à barbe en échange d’un flacon d’huile.
-  </label>
-</div>
+      <div class="section consentement">
+        <label>
+          <input type="checkbox" id="consentementTest" name="consentementTest" value="Oui" required>
+          Je suis consentant de tester gratuitement cette huile à barbe en échange d’un flacon d’huile de serpent provenant de cher LUHAYRA.
+        </label>
+      </div>
 
-      <button type="submit">Envoyer le questionnaire</button>
+      <button type="submit" id="btnEnvoyer">Envoyer le questionnaire</button>
+      <p class="erreur" id="messageErreur"></p>
     </form>
 
     <div class="merci" id="merci">
-      <h2>Merci pour ta réponse !</h2>
-      <p>Ton questionnaire a bien été préparé. Il ne reste plus qu’à envoyer le mail depuis ta messagerie.</p>
+      <h2>Merci pour votre réponse !</h2>
+      <p>Votre questionnaire a bien été envoyé à Luhayra.</p>
     </div>
   </div>
 
   <script>
     const formulaire = document.getElementById("formulaire");
+    const prenomInput = document.getElementById("prenom");
+    const nomInput = document.getElementById("nom");
     const avisInput = document.getElementById("avis");
-
-function censurerTexte(texte) {
-  const motsVulgaires = [
-    "merde",
-    "putain",
-    "pute",
-    "connard",
-    "connasse",
-    "con",
-    "salope",
-    "enculé",
-    "encule",
-    "fdp",
-    "bite",
-    "couille",
-    "couilles",
-    "nique",
-    "niquer",
-    "ta gueule",
-    "tg",
-    "bordel"
-  ];
-
-  let texteCensure = texte || "";
-
-  motsVulgaires.forEach(mot => {
-    const motProtege = mot.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(motProtege, "gi");
-    texteCensure = texteCensure.replace(regex, "****");
-  });
-
-  return texteCensure;
-}
-
-avisInput.addEventListener("input", function () {
-  avisInput.value = censurerTexte(avisInput.value);
-});
     const photo = document.getElementById("photo");
     const preview = document.getElementById("preview");
     const imagePreview = document.getElementById("imagePreview");
     const merci = document.getElementById("merci");
+    const btnEnvoyer = document.getElementById("btnEnvoyer");
+    const messageErreur = document.getElementById("messageErreur");
+
+    const motsVulgaires = [
+      "merde",
+      "putain",
+      "pute",
+      "connard",
+      "connasse",
+      "con",
+      "salope",
+      "enculé",
+      "encule",
+      "fdp",
+      "bite",
+      "couille",
+      "couilles",
+      "nique",
+      "niquer",
+      "ta gueule",
+      "tg",
+      "bordel"
+    ];
+
+    function contientMotVulgaire(texte) {
+      const contenu = texte || "";
+
+      return motsVulgaires.some(mot => {
+        const motProtege = mot.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`(^|[^a-zA-ZÀ-ÿ])${motProtege}($|[^a-zA-ZÀ-ÿ])`, "i");
+        return regex.test(contenu);
+      });
+    }
+
+    function verifierChampsInterdits() {
+      const champs = [
+        { element: prenomInput, nom: "prénom" },
+        { element: nomInput, nom: "nom" },
+        { element: avisInput, nom: "avis / critique" }
+      ];
+
+      const champsAvecErreur = [];
+
+      champs.forEach(champ => {
+        if (contientMotVulgaire(champ.element.value)) {
+          champ.element.classList.add("champ-erreur");
+          champsAvecErreur.push(champ.nom);
+        } else {
+          champ.element.classList.remove("champ-erreur");
+        }
+      });
+
+      if (champsAvecErreur.length > 0) {
+        messageErreur.textContent =
+          "Impossible d’envoyer le questionnaire : le champ " +
+          champsAvecErreur.join(", ") +
+          " contient un mot interdit. Merci de le modifier.";
+        messageErreur.style.display = "block";
+        return false;
+      }
+
+      messageErreur.style.display = "none";
+      messageErreur.textContent = "";
+      return true;
+    }
+
+    prenomInput.addEventListener("input", verifierChampsInterdits);
+    nomInput.addEventListener("input", verifierChampsInterdits);
+    avisInput.addEventListener("input", verifierChampsInterdits);
 
     photo.addEventListener("change", function () {
       const fichier = this.files[0];
@@ -429,64 +484,47 @@ avisInput.addEventListener("input", function () {
         };
 
         lecteur.readAsDataURL(fichier);
+      } else {
+        preview.style.display = "none";
       }
     });
 
-    formulaire.addEventListener("submit", function (event) {
+    formulaire.addEventListener("submit", async function (event) {
       event.preventDefault();
 
-      const prenom = document.getElementById("prenom").value;
-      const nom = document.getElementById("nom").value;
-      const age = document.getElementById("age").value;
-      const peau = document.querySelector('input[name="peau"]:checked').value;
-      const barbeLongueur = document.querySelector('input[name="barbeLongueur"]:checked').value;
-      const barbeDensite = document.querySelector('input[name="barbeDensite"]:checked').value;
-      const barbeTexture = document.querySelector('input[name="barbeTexture"]:checked').value;
-      const frequence = document.getElementById("frequence").value;
-      const avis = document.getElementById("avis").value;
-
-      let nomPhoto = "Aucune photo ajoutée";
-
-      if (photo.files.length > 0) {
-        nomPhoto = photo.files[0].name;
+      if (!verifierChampsInterdits()) {
+        return;
       }
 
-      const destinataire = "luhayra.boutique@gmail.com";
-      const sujet = "Nouveau sondage - Huile pour barbe";
+      const formData = new FormData(formulaire);
 
-      const message = `
-Nouveau questionnaire reçu :
+      btnEnvoyer.disabled = true;
+      btnEnvoyer.textContent = "Envoi en cours...";
 
-Nom : ${nom}
-Prénom : ${prenom}
-Âge : ${age} ans
+      try {
+        const response = await fetch("/envoyer", {
+          method: "POST",
+          body: formData
+        });
 
-Consentement : Oui
+        if (response.ok) {
+          formulaire.style.display = "none";
+          merci.style.display = "block";
 
-Type de peau : ${peau}
+          merci.scrollIntoView({
+            behavior: "smooth"
+          });
+        } else {
+          const texteErreur = await response.text();
+          throw new Error(texteErreur || "Erreur lors de l’envoi du questionnaire.");
+        }
+      } catch (error) {
+        messageErreur.textContent = "Impossible d’envoyer le questionnaire. Vérifie que le serveur est bien lancé ou que Render est bien déployé.";
+        messageErreur.style.display = "block";
 
-Type de barbe :
-- Longueur : ${barbeLongueur}
-- Densité : ${barbeDensite}
-- Texture : ${barbeTexture}
-
-Fréquence d'utilisation de l'huile : ${frequence}
-
-Photo ajoutée : ${nomPhoto}
-
-Avis / critique :
-${avis}
-      `;
-
-      const lienMail = `mailto:${destinataire}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(message)}`;
-
-      window.location.href = lienMail;
-
-      merci.style.display = "block";
-
-      merci.scrollIntoView({
-        behavior: "smooth"
-      });
+        btnEnvoyer.disabled = false;
+        btnEnvoyer.textContent = "Envoyer le questionnaire";
+      }
     });
   </script>
 
